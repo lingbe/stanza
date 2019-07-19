@@ -1,6 +1,7 @@
+import { AsyncPriorityQueue, priorityQueue } from 'async';
 import { EventEmitter } from 'events';
 
-import { Agent, AgentConfig, AgentEvents, Transport, TransportConfig } from './';
+import { Agent, AgentConfig, Transport } from './';
 import * as JID from './JID';
 import * as JXT from './jxt';
 import * as SASL from './lib/sasl';
@@ -11,6 +12,11 @@ import StreamManagement from './StreamManagement';
 import BOSH from './transports/bosh';
 import WebSocket from './transports/websocket';
 import { timeoutPromise, uuid } from './Utils';
+
+interface StreamData {
+    kind: string;
+    stanza: any;
+}
 
 export default class Client extends EventEmitter {
     public jid: string;
@@ -27,6 +33,8 @@ export default class Client extends EventEmitter {
         ) => Transport;
     };
     public sasl: SASL.Factory;
+    public incomingDataQueue: AsyncPriorityQueue<StreamData>;
+    public outgoingDataQueue: AsyncPriorityQueue<StreamData>;
 
     constructor(opts: AgentConfig = {}) {
         super();
@@ -59,36 +67,60 @@ export default class Client extends EventEmitter {
             websocket: WebSocket
         };
 
-        this.on('stream:data' as any, (json: any, kind: string) => {
-            this.emit(kind as any, json);
-            if (kind === 'message' || kind === 'presence' || kind === 'iq') {
-                this.sm.handle();
-                this.emit('stanza', json);
-            } else if (kind === 'sm') {
-                if (json.type === 'ack') {
-                    this.emit('stream:management:ack', json);
-                    this.sm.process(json);
-                }
-                if (json.type === 'request') {
-                    this.sm.ack();
-                }
-                return;
+        this.incomingDataQueue = priorityQueue<StreamData>(async (task, done) => {
+            const { kind, stanza } = task;
+            this.emit(kind as any, stanza);
+            if (stanza.id) {
+                this.emit((kind + ':id:' + stanza.id) as any, stanza);
             }
 
-            if (json.id) {
-                this.emit((kind + ':id:' + json.id) as any, json);
+            if (kind === 'message' || kind === 'presence' || kind === 'iq') {
+                this.emit('stanza', stanza);
+                await this.sm.handle();
+            } else if (kind === 'sm') {
+                if (stanza.type === 'ack') {
+                    await this.sm.process(stanza);
+                    this.emit('stream:management:ack', stanza);
+                }
+                if (stanza.type === 'request') {
+                    await this.sm.ack();
+                }
             }
+
+            done();
+        }, 1);
+
+        this.outgoingDataQueue = priorityQueue<StreamData>(async (task, done) => {
+            const { kind, stanza } = task;
+            await this.sm.track(kind, stanza);
+
+            if (kind === 'message') {
+                this.emit('message:sent', stanza, false);
+            }
+
+            if (this.transport) {
+                this.transport.send(kind, stanza);
+            }
+
+            done();
+        }, 1);
+
+        this.on('stream:data' as any, (json: any, kind: string) => {
+            this.incomingDataQueue.push(
+                {
+                    kind,
+                    stanza: json
+                },
+                0
+            );
         });
 
         this.on('disconnected', () => {
+            this.outgoingDataQueue.kill();
+            this.incomingDataQueue.kill();
+
             if (this.transport) {
                 delete this.transport;
-            }
-        });
-
-        this.on('auth:success', () => {
-            if (this.transport) {
-                this.transport.authenticated = true;
             }
         });
 
@@ -244,11 +276,8 @@ export default class Client extends EventEmitter {
         }
     }
 
-    public send(name: string, data: object) {
-        this.sm.track(name, data);
-        if (this.transport) {
-            this.transport.send(name, data);
-        }
+    public async send(kind: string, stanza: object) {
+        this.outgoingDataQueue.push({ kind, stanza }, 1);
     }
 
     public sendMessage(data: Message) {
@@ -256,7 +285,6 @@ export default class Client extends EventEmitter {
             id: this.nextId(),
             ...data
         };
-        this.emit('message:sent', msg, false);
         this.send('message', msg);
         return msg.id;
     }
