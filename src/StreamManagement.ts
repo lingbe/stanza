@@ -34,7 +34,7 @@ export default class StreamManagement {
     private inboundStarted: boolean;
     private outboundStarted: boolean;
     private client: Agent;
-    private cacheHandler: (state: SMState) => void;
+    private cacheHandler: (state: SMState) => Promise<void> | void;
 
     constructor(client: Agent) {
         this.client = client;
@@ -48,7 +48,7 @@ export default class StreamManagement {
         this.windowSize = 1;
         this.unacked = [];
         this.pendingAck = false;
-        this.cacheHandler = () => null;
+        this.cacheHandler = () => undefined;
     }
 
     get started() {
@@ -78,43 +78,47 @@ export default class StreamManagement {
         this.cacheHandler = handler;
     }
 
-    public enable() {
+    public async enable() {
         this.client.send('sm', {
             allowResumption: this.allowResume,
             type: 'enable'
         });
         this.handled = 0;
         this.outboundStarted = true;
+
+        await this._cache();
     }
 
-    public resume() {
+    public async resume() {
         this.client.send('sm', {
             handled: this.handled,
             previousSession: this.id!,
             type: 'resume'
         });
         this.outboundStarted = true;
+
+        await this._cache();
     }
 
-    public enabled(resp: StreamManagementEnabled) {
+    public async enabled(resp: StreamManagementEnabled) {
         this.id = resp.id;
         this.handled = 0;
         this.inboundStarted = true;
 
-        this._cache();
+        await this._cache();
     }
 
-    public resumed(resp: StreamManagementResume) {
+    public async resumed(resp: StreamManagementResume) {
         this.id = resp.previousSession;
         if (resp.handled) {
             this.process(resp, true);
         }
         this.inboundStarted = true;
 
-        this._cache();
+        await this._cache();
     }
 
-    public failed(resp: StreamManagementFailed) {
+    public async failed(resp: StreamManagementFailed) {
         // Resumption might fail, but the server can still tell us how far
         // the old session progressed.
         if (resp.handled) {
@@ -134,7 +138,7 @@ export default class StreamManagement {
         this.handled = 0;
         this.unacked = [];
 
-        this._cache();
+        await this._cache();
     }
 
     public ack() {
@@ -151,7 +155,7 @@ export default class StreamManagement {
         });
     }
 
-    public process(
+    public async process(
         ack: StreamManagementAck | StreamManagementResume | StreamManagementFailed,
         resend: boolean = false
     ) {
@@ -175,21 +179,21 @@ export default class StreamManagement {
             }
         }
 
-        this._cache();
+        await this._cache();
 
         if (this.needAck()) {
             this.request();
         }
     }
 
-    public track(kind: string, stanza: Message | Presence | IQ) {
+    public async track(kind: string, stanza: Message | Presence | IQ) {
         if (kind !== 'message' && kind !== 'presence' && kind !== 'iq') {
             return;
         }
 
         if (this.outboundStarted) {
             this.unacked.push([kind, stanza] as Unacked);
-            this._cache();
+            await this._cache();
 
             if (this.needAck()) {
                 this.request();
@@ -197,10 +201,10 @@ export default class StreamManagement {
         }
     }
 
-    public handle() {
+    public async handle() {
         if (this.inboundStarted) {
             this.handled = mod(this.handled + 1, MAX_SEQ);
-            this._cache();
+            await this._cache();
         }
     }
 
@@ -208,8 +212,8 @@ export default class StreamManagement {
         return !this.pendingAck && this.unacked.length >= this.windowSize;
     }
 
-    private _cache() {
-        this.cacheHandler({
+    private async _cache() {
+        await this.cacheHandler({
             handled: this.handled,
             id: this.id,
             jid: this.client.jid,
