@@ -1,8 +1,8 @@
 import { AsyncPriorityQueue, priorityQueue } from 'async';
 import { EventEmitter } from 'events';
 
-import { Agent, AgentConfig, AgentHooks, Transport } from './';
-import HookEmitter from './HookEmitter';
+import { Agent, AgentConfig, AgentEvents, AgentHooks, Transport } from './';
+import HookEmitter, { Logger } from './HookEmitter';
 import * as JID from './JID';
 import * as JXT from './jxt';
 import * as SASL from './lib/SASL';
@@ -199,6 +199,14 @@ export default class Client extends EventEmitter {
         return res;
     }
 
+    public async emitCompat<T extends keyof AgentEvents & keyof AgentHooks>(
+        name: T,
+        data: AgentHooks[T]
+    ): Promise<AgentHooks[T]> {
+        this.emit(name, data);
+        return this.hooks.emit(name, data);
+    }
+
     public use(
         pluginInit: boolean | ((agent: Agent, registry: JXT.Registry, config: AgentConfig) => void)
     ) {
@@ -206,6 +214,14 @@ export default class Client extends EventEmitter {
             return;
         }
         pluginInit((this as unknown) as Agent, this.stanzas, this.config);
+    }
+
+    public registerLogger(logger: Logger) {
+        this.hooks.registerLogger(logger);
+    }
+
+    public log(level: string, format: string, ...args: any[]) {
+        this.hooks.log(level, format, ...args);
     }
 
     public nextId() {
@@ -369,6 +385,7 @@ export default class Client extends EventEmitter {
         const currConfig = this.config || {};
         this.config = {
             jid: '',
+            maxAuthAttempts: 5,
             transports: {
                 bosh: true,
                 websocket: true

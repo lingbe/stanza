@@ -168,6 +168,14 @@
 
 <p></p>
 
+<h3 id="emitCompat">emitCompat</h3>
+
+```
+(name: <T>, data: AgentHooks[T]) => Promise
+```
+
+<p></p>
+
 <h3 id="enableCarbons">enableCarbons</h3>
 
 ```
@@ -259,7 +267,7 @@
 <h3 id="getCredentials">getCredentials</h3>
 
 ```
-() => Promise
+(expected: ExpectedCredentials) => Promise
 ```
 
 <p></p>
@@ -520,6 +528,14 @@
 
 <p></p>
 
+<h3 id="log">log</h3>
+
+```
+(level: string, format: string, args: any[]) => void
+```
+
+<p></p>
+
 <h3 id="markAcknowledged">markAcknowledged</h3>
 
 ```
@@ -644,6 +660,14 @@
 
 ```
 (name: string, priority: number, handler: FeatureHandler) => void
+```
+
+<p></p>
+
+<h3 id="registerLogger">registerLogger</h3>
+
+```
+(logger: Logger) => void
 ```
 
 <p></p>
@@ -884,7 +908,7 @@
 <h3 id="use">use</h3>
 
 ```
-(plugin: (agent: Agent, registry: JXT.Registry, config: AgentConfig) => void) => void
+(plugin: (agent: Agent, registry: Registry, config: AgentConfig) => void) => void
 ```
 
 <p></p>
