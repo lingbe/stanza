@@ -8,7 +8,7 @@
  */
 
 import test from 'tape';
-import { DIGEST } from '../../src/lib/sasl';
+import { DIGEST } from '../../src/lib/SASL';
 
 // tslint:disable no-hardcoded-credentials
 

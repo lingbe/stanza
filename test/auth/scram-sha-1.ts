@@ -1,5 +1,5 @@
 import test from 'tape';
-import { SCRAM } from '../../src/lib/sasl';
+import { SCRAM } from '../../src/lib/SASL';
 
 // tslint:disable no-hardcoded-credentials
 
