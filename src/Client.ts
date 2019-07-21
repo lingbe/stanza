@@ -19,6 +19,16 @@ interface StreamData {
     stanza: any;
 }
 
+type Stanza = any;
+function redactLogs(kind: string, stanza: Stanza): Stanza {
+    let logData = stanza;
+    if ((kind === 'sasl' || kind === 'handshake') && stanza.value) {
+        // This is sensitive information possibly containing passwords. Redact!
+        logData = Object.assign({}, stanza, { value: '-- REDACTED --' });
+    }
+    return logData;
+}
+
 export default class Client extends EventEmitter {
     public jid: string;
     public config!: AgentConfig;
@@ -73,13 +83,15 @@ export default class Client extends EventEmitter {
 
         this.incomingDataQueue = priorityQueue<StreamData>(async (task, done) => {
             const { kind, stanza } = task;
-            this.emit(kind as any, stanza);
+            this.log('debug', 'INCOMING (%s) :: %o', kind, redactLogs(kind, stanza));
+
+            await this.emitCompat(kind as any, stanza);
             if (stanza.id) {
-                this.emit((kind + ':id:' + stanza.id) as any, stanza);
+                this.emitCompat((kind + ':id:' + stanza.id) as any, stanza);
             }
 
             if (kind === 'message' || kind === 'presence' || kind === 'iq') {
-                this.emit('stanza', stanza);
+                await this.emitCompat('stanza', stanza);
                 await this.sm.handle();
             } else if (kind === 'sm') {
                 if (stanza.type === 'ack') {
@@ -102,6 +114,7 @@ export default class Client extends EventEmitter {
                 this.emit('message:sent', stanza, false);
             }
 
+            this.log('debug', 'OUTGOING (%s) :: %o', kind, redactLogs(kind, stanza));
             if (this.transport) {
                 this.transport.send(kind, stanza);
             }

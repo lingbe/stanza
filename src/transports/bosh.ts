@@ -174,6 +174,7 @@ export default class BOSHConnection implements Transport {
         const bosh = this.stanzas.export('bosh', meta)!;
         const body = [bosh.openTag(), ...payloads, bosh.closeTag()].join('');
 
+        this.client.log('verbose', 'OUTGOING (RAW) :: %s', body);
         this.client.emit('raw', 'outgoing', body);
 
         try {
@@ -199,6 +200,7 @@ export default class BOSHConnection implements Transport {
                 if (rawData === '') {
                     return;
                 }
+                this.client.log('verbose', 'INCOMING (RAW) :: %s', rawData);
                 this.client.emit('raw', 'incoming', rawData);
 
                 const parser = new StreamParser({
