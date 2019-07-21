@@ -78,7 +78,7 @@ export default function(client: Agent) {
             } catch (err) {
                 cmd = 'disconnect';
                 msg = err.message;
-                console.error(err);
+                client.log('error', 'Stream negotiation failed: %s', err.message);
             }
             if (!cmd) {
                 continue;

@@ -141,14 +141,14 @@ export default class StreamManagement {
         await this._cache();
     }
 
-    public ack() {
+    public async ack() {
         this.client.send('sm', {
             handled: this.handled,
             type: 'ack'
         });
     }
 
-    public request() {
+    public async request() {
         this.pendingAck = true;
         this.client.send('sm', {
             type: 'request'

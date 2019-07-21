@@ -245,7 +245,7 @@ export default class Client extends EventEmitter {
                             this.config.server!
                         );
                     } catch (err) {
-                        console.error(err);
+                        this.log('error', 'Error connecting using %s: %o', name, err);
                         continue;
                     }
                 }
@@ -274,7 +274,7 @@ export default class Client extends EventEmitter {
             return;
         }
 
-        console.error('No endpoints found for the requested transports.');
+        this.log('error', 'No endpoints found for the requested transports.');
         return this.disconnect();
     }
 
