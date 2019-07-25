@@ -5,7 +5,7 @@ import { Agent, AgentConfig, AgentEvents, AgentHooks, Transport } from './';
 import HookEmitter, { Logger } from './HookEmitter';
 import * as JID from './JID';
 import * as JXT from './jxt';
-import * as SASL from './lib/SASL';
+import * as SASL from './lib/sasl';
 import { core as corePlugins } from './plugins';
 import { IQ, Message, Presence, StreamError } from './protocol';
 import Protocol from './protocol';

@@ -1,4 +1,4 @@
-import * as Hashes from './crypto';
+import * as Hashes from '../crypto';
 
 export interface Credentials {
     username?: string;
