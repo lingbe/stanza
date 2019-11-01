@@ -10,7 +10,7 @@
     ],
     "dependencies": {
         "@types/async": "^3.0.3",
-        "@types/node": "^12.11.1",
+        "@types/node": "12.12.3",
         "@types/punycode": "^2.1.0",
         "@types/readable-stream": "^2.3.5",
         "@types/ws": "^6.0.2",
