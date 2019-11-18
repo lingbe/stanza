@@ -55,7 +55,7 @@
 | [XEP-0166](https://xmpp.org/extensions/xep-0166.html) | Jingle                                             | 1.1.1   | [Source](../src/protocol/xep0166.ts) |                                              |
 | [XEP-0167](https://xmpp.org/extensions/xep-0167.html) | Jingle RTP Sessions                                | 1.1.1   | [Source](../src/protocol/xep0167.ts) | [Test Cases](../test/protocol-cases/xep0167) |
 | [XEP-0172](https://xmpp.org/extensions/xep-0172.html) | User Nickname                                      | 1.1     | [Source](../src/protocol/xep0172.ts) |                                              |
-| [XEP-0176](https://xmpp.org/extensions/xep-0176.html) | Jingle ICE-UDP Transport Method                    | 1.0     | [Source](../src/protocol/xep0176.ts) |                                              |
+| [XEP-0176](https://xmpp.org/extensions/xep-0176.html) | Jingle ICE-UDP Transport Method                    | 1.0     | [Source](../src/protocol/xep0176.ts) | [Test Cases](../test/protocol-cases/xep0176) |
 | [XEP-0177](https://xmpp.org/extensions/xep-0177.html) | Jingle Raw UDP Transport Method                    | 1.1     | [Source](../src/protocol/xep0177.ts) |                                              |
 | [XEP-0184](https://xmpp.org/extensions/xep-0184.html) | Message Delivery Receipts                          | 1.2     | [Source](../src/protocol/xep0184.ts) |                                              |
 | [XEP-0186](https://xmpp.org/extensions/xep-0186.html) | Invisible Command                                  | 0.13    | [Source](../src/protocol/xep0186.ts) |                                              |
@@ -90,13 +90,13 @@
 | [XEP-0320](https://xmpp.org/extensions/xep-0320.html) | Use of DTLS-SRTP in Jingle Sessions                | 0.3.1   | [Source](../src/protocol/xep0320.ts) |                                              |
 | [XEP-0333](https://xmpp.org/extensions/xep-0333.html) | Chat Markers                                       | 0.3.0   | [Source](../src/protocol/xep0333.ts) | [Test Cases](../test/protocol-cases/xep0333) |
 | [XEP-0334](https://xmpp.org/extensions/xep-0334.html) | Message Processing Hints                           | 0.3.0   | [Source](../src/protocol/xep0334.ts) | [Test Cases](../test/protocol-cases/xep0334) |
-| [XEP-0335](https://xmpp.org/extensions/xep-0335.html) | JSON Containers                                    | 0.1     | [Source](../src/protocol/xep0335.ts) |                                              |
+| [XEP-0335](https://xmpp.org/extensions/xep-0335.html) | JSON Containers                                    | 0.1     | [Source](../src/protocol/xep0335.ts) | [Test Cases](../test/protocol-cases/xep0335) |
 | [XEP-0339](https://xmpp.org/extensions/xep-0339.html) | Source-Specific Media Attributes in Jingle         | 0.1     | [Source](../src/protocol/xep0167.ts) | [Test Cases](../test/protocol-cases/xep0167) |
 | [XEP-0350](https://xmpp.org/extensions/xep-0350.html) | Data Forms Geolocation Element                     | 0.2     | [Source](../src/protocol/xep0080.ts) |                                              |
 | [XEP-0352](https://xmpp.org/extensions/xep-0352.html) | Client State Indication                            | 0.2.1   | [Source](../src/protocol/xep0352.ts) |                                              |
 | [XEP-0357](https://xmpp.org/extensions/xep-0357.html) | Push Notifications                                 | 0.3     | [Source](../src/protocol/xep0357.ts) |                                              |
 | [XEP-0359](https://xmpp.org/extensions/xep-0359.html) | Unique and Stable Stanza IDs                       | 0.5     | [Source](../src/protocol/xep0359.ts) | [Test Cases](../test/protocol-cases/xep0359) |
 | [XEP-0363](https://xmpp.org/extensions/xep-0363.html) | HTTP File Upload                                   | 0.5.0   | [Source](../src/protocol/xep0363.ts) | [Test Cases](../test/protocol-cases/xep0363) |
-| [XEP-0371](https://xmpp.org/extensions/xep-0371.html) | Jingle ICE Transport Method                        | 0.2     | [Source](../src/protocol/xep0176.ts) |                                              |
+| [XEP-0371](https://xmpp.org/extensions/xep-0371.html) | Jingle ICE Transport Method                        | 0.2     | [Source](../src/protocol/xep0176.ts) | [Test Cases](../test/protocol-cases/xep0371) |
 | [XEP-0380](https://xmpp.org/extensions/xep-0380.html) | Explicit Message Encryption                        | 0.2.0   | [Source](../src/protocol/xep0380.ts) | [Test Cases](../test/protocol-cases/xep0380) |
 | [XEP-0384](https://xmpp.org/extensions/xep-0384.html) | OMEMO Encryption                                   | 0.3.0   | [Source](../src/protocol/xep0384.ts) | [Test Cases](../test/protocol-cases/xep0384) |
