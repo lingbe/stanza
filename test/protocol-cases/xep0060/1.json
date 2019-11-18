@@ -1,9 +1,0 @@
-[
-    "iq",
-    {
-        "lang": "en",
-        "pubsub": {
-            "context": "owner"
-        }
-    }
-]

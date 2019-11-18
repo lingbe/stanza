@@ -1,3 +1,0 @@
-<message from='pubsub.shakespeare.lit' to='francisco@denmark.lit' id='foo'>
-  <json xmlns="urn:xmpp:json:0">{"name":"romeo","age":"421","status":"single"}</json>
-</message>
