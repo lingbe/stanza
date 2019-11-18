@@ -200,10 +200,10 @@ export default class ICESession extends BaseSession {
                 this._log('debug', 'Could not add null ICE candidate');
                 // "HACK" force fast reconnect, in different networks the first try o connect often fails.
                 // I think this "catch" is trigger on all ICE candidate are received or similar
-                // but is a good site to force reconnect and this not breaks if is already connected 
+                // but is a good site to force reconnect and this not breaks if is already connected
                 setTimeout(() => {
-                  console.log('# stanza go restartIce');
-                  this.restartIce()
+                    console.log('%c [ Stanza ] hack force restart', 'color: #bada55');
+                    this.restartIce();
                 }, 500);
                 this.maybeRestartIce();
             } finally {
